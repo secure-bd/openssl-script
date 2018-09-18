@@ -1,2 +1,2 @@
-# Openssl Development
-OpenSSL Commands
+# Openssl Scripts Development
+OpenSSL Scripting
