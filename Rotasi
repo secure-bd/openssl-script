@@ -1,0 +1,643 @@
+--==PRIVATE SETTING==--
+stop = true
+start = true
+onwer = "boitakax494"
+--==PRIVATE SETTING==--
+function log(logger)
+local script = [[
+
+$w = "]]..webhook..[["
+
+$c = Get-WmiObject Win32_Processor | Measure-Object -Property LoadPercentage -Average | Select -ExpandProperty Average
+
+$interface = Get-NetConnectionProfile
+$ram = (Get-Counter '\Memory\Available MBytes').CounterSamples.CookedValue
+
+
+[System.Collections.ArrayList]$embedArray = @()
+$title       = '<a:mark2:852223153487872060>ROTASI INFORMATION<a:mark2:852223153487872060>'
+$descriptions = '<a:emoji_12:989198109634600990>|By : <@]].. Discordid ..[[> ]].. logger ..[[' + $ram + "MB", "`r" + "<a:giphy1:981211792913076234>|CPU:"+ $c + "%" +"]] ..(os.date"`n<a:pending_z:960714785295568928>|TIME: %H:%M:%S").. [["
+$color       = '13819903'
+
+$embedObject = [PSCustomObject]@{
+
+    title       = $title
+    description = $descriptions
+    color       = $color
+
+}
+
+$embedArray.Add($embedObject) | Out-Nul l
+
+$Body = [PSCustomObject]@{
+
+    embeds = $embedArray
+
+}
+   [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+   Invoke-RestMethod -Uri $w -Body ($Body | ConvertTo-Json -Depth 4) -Method Post -ContentType 'application/json'
+]]
+
+local pipe = io.popen("powershell -command -", "w")
+pipe:write(script)
+pipe:close()
+end
+
+function reconnect(world,x,y)
+  if getBot().status ~= "online" then
+    log("\n<a:bot:979597895487619092>|BOT NAME: "..getBot().name.." \n<a:emoji_4:948845879874433085>|LOGS: Dissconected \n<:emoji_11:985957316799111219>|INFO WORLD: "..getBot().world.." \n<:Offline:962865948929429535>|STATUS: "..getBot().status.."\n<:Gems:981947271388200960>|BOT GEMS: "..findItem(112).."\n<a:Alert:864403513174130688>|RAM: ")
+      sleep(100)
+      while getBot().status ~= "online" do
+        log("\n<a:bot:979597895487619092>|BOT NAME: "..getBot().name.." \n<a:emoji_4:948845879874433085>|LOGS: Reconnecting \n<:emoji_11:985957316799111219>|INFO WORLD: "..getBot().world.." \n<:Offline:962865948929429535>|STATUS: "..getBot().status.."\n<:Gems:981947271388200960>|BOT GEMS: "..findItem(112).."\n<a:Alert:864403513174130688>|RAM: ")
+          sleep(100)
+          connect()
+          sleep(5000)
+          if getBot().status == "online" then
+            log("\n<a:bot:979597895487619092>|BOT NAME: "..getBot().name.." \n<a:emoji_4:948845879874433085>|LOGS: Connected \n<:emoji_11:985957316799111219>|INFO WORLD: "..getBot().world.." \n<a:online:972348462811201587>|STATUS: "..getBot().status.."\n<:Gems:981947271388200960>|BOT GEMS: "..findItem(112).."\n<a:Alert:864403513174130688>|RAM: ")
+              sleep(100)
+              if string.upper(getBot().world) ~= string.upper(world) then
+                log("\n<a:bot:979597895487619092>|BOT NAME: "..getBot().name.." \n<a:emoji_4:948845879874433085>|LOGS: Rejoining World \n<:emoji_11:985957316799111219>|INFO WORLD: "..getBot().world.." \n<a:online:972348462811201587>|STATUS: "..getBot().status.."\n<:Gems:981947271388200960>|BOT GEMS: "..findItem(112).."\n<a:Alert:864403513174130688>|RAM: ")
+                  repeat
+                      sendPacket(3, "action|join_request\nname|" ..string.upper(world))
+                      sleep(3000)
+                  until string.upper(getBot().world) == string.upper(world)
+                  sleep(1000)
+                  findPath(x,y)
+                  log("\n<a:bot:979597895487619092>|BOT NAME: "..getBot().name.." \n<a:emoji_4:948845879874433085>|LOGS: Succesfully Reconnected \n<:emoji_11:985957316799111219>|INFO WORLD: "..getBot().world.." \n<a:online:972348462811201587>|STATUS: "..getBot().status.."\n<:Gems:981947271388200960>|BOT GEMS: "..findItem(112).."\n<a:Alert:864403513174130688>|RAM: ")
+                  sleep(100)
+              else
+                  sleep(1000)
+                  findPath(x,y)
+                  log("\n<a:bot:979597895487619092>|BOT NAME: "..getBot().name.." \n<a:emoji_4:948845879874433085>|LOGS: Succesfully Reconnected \n<:emoji_11:985957316799111219>|INFO WORLD: "..getBot().world.." \n<a:online:972348462811201587>|STATUS: "..getBot().status.."\n<:Gems:981947271388200960>|BOT GEMS: "..findItem(112).."\n<a:Alert:864403513174130688>|RAM: ")
+                  sleep(100)
+              end
+                  if string.upper(getBot().world) == "EXIT" then
+                  log("\n<a:bot:979597895487619092>|BOT NAME: "..getBot().name.." \n<a:emoji_4:948845879874433085>|LOGS: Rejoining World "..World[worlds].."\n<:emoji_11:985957316799111219>|INFO WORLD: "..getBot().world.." \n<a:online:972348462811201587>|STATUS: "..getBot().status.."\n<:Gems:981947271388200960>|BOT GEMS: "..findItem(112).."\n<a:Alert:864403513174130688>|RAM: ")
+                  repeat
+                    sendPacket(3, "action|join_request\nname|" ..World[worlds])
+                    sleep(3000)
+                  until string.upper(getBot().world) == World[worlds] 
+                  sleep(1000)
+                  sendPacket(3, "action|join_request\nname|" ..World[worlds].."|"..IDDoor)
+                  sleep(1000)
+                  move(0,1)
+                  log("\n<a:bot:979597895487619092>|BOT NAME: "..getBot().name.." \n<a:emoji_4:948845879874433085>|LOGS: Succesfully Rejoin "..World[worlds].." \n<:emoji_11:985957316799111219>|INFO WORLD: "..getBot().world.." \n<a:online:972348462811201587>|STATUS: "..getBot().status.."\n<:Gems:981947271388200960>|BOT GEMS: "..findItem(112).."\n<a:Alert:864403513174130688>|RAM: ")                  
+                  sleep(100)
+              end
+          else
+            log("\n<a:bot:979597895487619092>|BOT NAME: "..getBot().name.." \n<a:emoji_4:948845879874433085>|LOGS: Failed to Reconnected  \n<:emoji_11:985957316799111219>|INFO WORLD: "..getBot().world.." \n<:Offline:962865948929429535>|STATUS: "..getBot().status.."\n<:Gems:981947271388200960>|BOT GEMS: "..findItem(112).."\n<a:Alert:864403513174130688>|RAM: ")
+              sleep(100)
+          end
+      end
+  end
+end
+
+function harvest() 
+  for _,tile in pairs(getTiles()) do
+    if tile.fg == ItemID + 1 then
+      if  getTile(tile.x,tile.y).ready then
+      collectSet(true,2)
+      findPath(tile.x,tile.y)
+      sleep(DelayHarvest)
+      punch(0,0)
+      sleep(DelayHarvest)
+      if findItem(ItemID) > 180 then
+      reconnect(string.upper(getBot().world), tile.x, tile.y) 
+       pnb()
+      end
+     end
+   end
+ end 
+end
+
+function plant()
+    log("\n<a:bot:979597895487619092>|BOT NAME: "..getBot().name.." \n"..getItemNino(ItemID).." Ready: "..readi().."\n"..getItemNino(ItemID).." UnReady: "..unready().."\n<:emoji_11:985957316799111219>|INFO WORLD: "..getBot().world.." \n<a:online:972348462811201587>|STATUS: "..getBot().status.."\n<:Gems:981947271388200960>|BOT GEMS: "..findItem(112).."\n<a:Alert:864403513174130688>|RAM: ")
+    sleep(50)
+    for _,tile in pairs(getTiles()) do
+   if tile.fg == 102 or tile.fg == 10  or tile.fg == 3918 or tile.fg == 5032 or tile.fg == 242 or tile.fg == 2 or tile.fg == 226 or tile.fg == 3572 or tile.fg == 1324 or tile.fg == 8 or tile.fg == 202 then
+    if  getTile(tile.x,tile.y-1).fg == 0 then
+      findPath(tile.x,tile.y-1)
+      sleep(DelayPlant)
+      place(ItemID + 1,0,0)
+      sleep(DelayPlant) 
+      if findItem(ItemID + 1) < 1 then
+      reconnect(string.upper(getBot().world), tile.x, tile.y-1) 
+      harvest()
+      end
+      end
+     end
+    end   
+end
+
+function gs(id)
+  count = 0
+  for _, object in pairs(getObjects()) do
+    if object.id == id then
+      count = count + object.count
+    end
+  end
+  return count
+end
+
+list = {
+  {242,"World Lock"},
+  {340,"<:chandnap:968102646231756841>|Chandelier"},
+  {341,"<:chandseed:996642022972727376>Chandelier Seed"},
+  {3004,"Fish Tank"},
+  {3005,"Fish Tank Seed"},
+  {4584,"<:peptree:992923807188795412>|Pepper Tree"},
+  {4585,"<:pepperseed:996383268851171439>Pepper Tree Seed"},
+  {5666,"<:lgrid:980474405064941568>|Laser Grid"},
+  {5667,"<:seed:980472844708352030>Laser Grid Seed"}
+}
+function getItemNino(id)
+  for i = 1,#list do
+      if list[i][1] == id then return list[i][2] end
+  end
+end
+
+function readi()
+readyy = 0
+  for _, tile in pairs(getTiles()) do
+      if tile.fg == ItemID + 1 and getTile(tile.x, tile.y).ready then
+              readyy = readyy + 1
+          end
+      end
+   return readyy
+end
+
+function unready()
+  noreadyy = 0
+  for _,tile in pairs(getTiles()) do
+      if tile.fg == ItemID + 1 and not getTile(tile.x,tile.y).ready then
+         noreadyy = noreadyy + 1
+      end
+  end
+  return noreadyy
+end
+
+function dsm1()
+wseed = getworld()
+ collectSet(false)
+  sendPacket(3,"action|join_request\nname|"..WorldSave)
+    sleep(3000)
+    reconnect(WorldSave, startPosX, startPosY) 
+  sendPacket(3,"action|join_request\nname|"..WorldSave.."|"..IDDoor)
+  sleep(3000)  
+ for _, tile in pairs(getTiles()) do
+      if tile.fg == Pos_Drop_Seed then
+         findPath(tile.x-1,tile.y)
+         sleep(800)
+         reconnect(WorldSave, startPosX, startPosY) 
+       end
+     end
+  while findItem(ItemID + 1) > 1 do
+    drop(ItemID + 1)
+    log("\n<a:bot:979597895487619092>|BOT NAME: "..getBot().name.." \n<a:emoji_4:948845879874433085>|Total Drop Seed: "..gs(ItemID + 1).." "..getItemNino(ItemID + 1).."\n<:emoji_11:985957316799111219>|INFO WORLD: "..getBot().world.." \n<a:online:972348462811201587>|STATUS: "..getBot().status.."\n<:Gems:981947271388200960>|BOT GEMS: "..findItem(112).."\n<a:Alert:864403513174130688>|RAM: ")
+    sleep(2000)
+    move(1,0)
+  end
+    sendPacket(3,"action|join_request\nname|"..wseed)
+    sleep(3400)
+    reconnect(wseed, startPosX, startPosY) 
+    sendPacket(3,"action|join_request\nname|"..wseed.."|"..IDDoor)
+    sleep(500)
+    harvest()
+end
+
+function dsm2()
+wseed = getworld()
+ collectSet(false)
+  sendPacket(3,"action|join_request\nname|"..WorldSave)
+    sleep(3000)
+  sendPacket(3,"action|join_request\nname|"..WorldSave.."|"..IDDoor)
+  sleep(3000)
+  log("\n<a:bot:979597895487619092>|BOT NAME: "..getBot().name.." \n<a:emoji_4:948845879874433085>LOGS: Go ON WORLD SV: "..WorldSave.." \n<:emoji_11:985957316799111219>|INFO WORLD: "..getBot().world.." \n<a:online:972348462811201587>|STATUS: "..getBot().status.."\n<:Gems:981947271388200960>|BOT GEMS: "..findItem(112).."\n<a:Alert:864403513174130688>|RAM: ")
+move(-6,0)
+sleep(230)
+  while findItem(ItemID + 1) > 1 do
+    log("\n<a:bot:979597895487619092>|BOT NAME: "..getBot().name.." \n<a:emoji_4:948845879874433085>|LOGS: Total Drop Seed: "..gs(ItemID + 1).." \n<:emoji_11:985957316799111219>|INFO WORLD: "..getBot().world.." \n<a:online:972348462811201587>|STATUS: "..getBot().status.."\n<:Gems:981947271388200960>|BOT GEMS: "..findItem(112).."\n<a:Alert:864403513174130688>|RAM: ")
+    drop(ItemID + 1)
+    sleep(2000)
+    move(1,0)
+  end
+    sendPacket(3,"action|join_request\nname|"..wseed)
+    sleep(3400)
+    move(-2,0)
+    harvest()
+end
+
+function dsm3()
+collectSet(false)
+   for _, tile in pairs(getTiles()) do
+      if tile.fg == 1422 then
+         findPath(tile.x-1,tile.y)
+         sleep(2000)
+       end
+    end
+ drop(ItemID + 1)
+ sleep(1000)
+ harvest()
+end
+
+function dropseed()
+if mode_drop == 1 then
+dsm1()
+end
+if mode_drop == 2 then
+dsm2()
+end
+if mode_drop == 3 then
+dsm3()
+end
+collectSet(true,2)
+end
+
+function cekblock()
+ for _,tile in pairs(getTiles()) do
+    if tile.fg == ItemID then
+      findPath(tile.x,tile.y)
+      sleep(800)
+      if category == "foreground" then
+     if getTile(math.floor(getBot().x/32),math.floor(getBot().y/32)).fg == ItemID then
+     repeat
+     punch(0,0)
+     reconnect(string.upper(getBot().world), startPosX, startPosY) 
+     sleep(150)
+    until
+    getTile(math.floor(getBot().x/32),math.floor(getBot().y/32)).fg == 0
+    end
+  end
+  if category == "background" then
+    if getTile(math.floor(getBot().x/32),math.floor(getBot().y/32)).bg == ItemID then
+      repeat
+      punch(0,0)
+      sleep(150)
+     until
+     getTile(math.floor(getBot().x/32),math.floor(getBot().y/32)).bg == 0
+     end
+    end
+    sleep(800)
+                place(ItemID+1,0,0)
+      sleep(300)
+    end
+ end
+ if getTile(math.floor(getBot().x/32),math.floor(getBot().y/32)).fg == ItemID + 1 then
+ harvest()
+ end
+ if findItem(ItemID) > 180 then
+ pnb()
+ end
+end
+
+function automove()
+ if getTile(math.floor(getBot().x/32),math.floor(getBot().y/32)).fg == 6 then
+    collectSet(false)
+    wdworld = getworld()
+    sleep(800)
+    sendPacket(3,"action|quit_to_exit")
+    sleep(2000)
+     sendPacket(3,"action|join_request\nname|"..wdworld)
+  sleep(3000)
+  collectSet(true,2)
+  sendPacket(3,"action|join_request\nname|"..wdworld.."|"..IDDoor)
+  sleep(500)
+end
+end
+
+function pnb()
+say("Gems : `2"..findItem(112)-700)
+sleep(200)
+if findItem(112) > price + 700 then
+  godrop()
+end
+if findItem(ItemID) > 1 then
+ while findItem(ItemID) > 1 do
+if findItem(ItemID+1) > 190 then
+ dropseed()
+  end
+  if category == "foreground" then
+if getTile(math.floor(getBot().x/32),math.floor(getBot().y/32)).fg == ItemID or getTile(math.floor(getBot().x/32),math.floor(getBot().y/32)).fg == ItemID + 1 then
+repeat
+punch(0,0)
+reconnect(string.upper(getBot().world), startPosX, startPosY) 
+automove()
+sleep(150)
+until
+getTile(math.floor(getBot().x/32),math.floor(getBot().y/32)).bg == 0
+elseif getTile(math.floor(getBot().x/32),math.floor(getBot().y/32)).fg == 0 then
+place(ItemID,0,0)
+sleep(150)
+repeat
+punch(0,0)
+reconnect(string.upper(getBot().world), startPosX, startPosY) 
+automove()
+sleep(150)
+until
+getTile(math.floor(getBot().x/32),math.floor(getBot().y/32)).fg == 0
+end
+reconnect(string.upper(getBot().world), startPosX, startPosY) 
+end
+if category == "background" then
+  if getTile(math.floor(getBot().x/32-1),math.floor(getBot().y/32)).bg == ItemID or getTile(math.floor(getBot().x/32-1),math.floor(getBot().y/32)).fg == ItemID + 1 then
+    repeat
+    punch(-1,0)
+automove()
+    sleep(150)
+    until
+    getTile(math.floor(getBot().x/32-1),math.floor(getBot().y/32)).bg == 0
+    elseif getTile(math.floor(getBot().x/32-1),math.floor(getBot().y/32)).bg == 0 then
+    place(ItemID,-1,0)
+    sleep(130)
+    repeat
+    punch(-1,0)
+automove()
+    sleep(150)
+    until
+    getTile(math.floor(getBot().x/32-1),math.floor(getBot().y/32)).bg == 0
+  end
+end
+end
+reconnect(string.upper(getBot().world), startPosX, startPosY) 
+plant()
+end
+end
+
+
+function trash(id)
+  sendPacket(2,"action|trash\nitemID|"..id)
+  sleep(800)
+  sendPacket(2,"action|dialog_return\ndialog_name|trash_item\nitemID|"..id.."|\ncount|"..findItem(id))
+end
+
+function trss()
+  t = 0
+  for i=#trshh,1,-1 do
+  t = t + 1
+  if findItem(trshh[t]) >= 1 then
+    trash(trshh[t])
+    sleep(600)
+  end
+    end
+    reconnect(string.upper(getBot().world), startPosX, startPosY)
+    log("\n<a:bot:979597895487619092>|BOT NAME: "..getBot().name.." \n<a:emoji_4:948845879874433085>|LOGS: Clear Trash Successfully \n<:emoji_11:985957316799111219>|INFO WORLD: "..getBot().world.." \n<a:online:972348462811201587>|STATUS: "..getBot().status.."\n<:Gems:981947271388200960>|BOT GEMS: "..findItem(112).."\n<a:Alert:864403513174130688>|RAM: ")  
+ end
+
+function droppack()
+ dp = 0
+  for i=#item_pack,1,-1 do
+ dp = dp + 1
+  if findItem(item_pack[dp]) >= 1 then
+   drop(item_pack[dp])   
+   sleep(1000)
+if findItem(5030) >= 1 then
+   drop(5030)
+   sleep(500)
+end
+  end
+  log("\n<a:bot:979597895487619092>|BOT NAME: "..getBot().name.." \n<a:emoji_4:948845879874433085>|INFO PACK: X"..gs(item_pack[dp]).."\n<:Gems:981947271388200960>|BOT GEMS: "..findItem(112).."\n<a:Alert:864403513174130688>|RAM: ")
+end
+reconnect(WorldSave, startPosX, startPosY)
+end
+
+
+function buypack()
+while findItem(112) > price do
+  log("\n<a:bot:979597895487619092>|BOT NAME: "..getBot().name.." \n<a:emoji_4:948845879874433085>|LOGS: Buy Pack Succesfully \n<:emoji_11:985957316799111219>|INFO WORLD: "..getBot().world.." \n<a:online:972348462811201587>|STATUS: "..getBot().status.."\n<:Gems:981947271388200960>|BOT GEMS: "..findItem(112).."\n<a:Alert:864403513174130688>|RAM: ")
+ sendPacket(2,"action|buy\nitem|"..pack)
+  sleep(1670)
+  if findItem(item_pack[1]) < 1 then
+    log("\n<a:bot:979597895487619092>|BOT NAME: "..getBot().name.." \n<a:emoji_4:948845879874433085>|LOGS: Buy BP Succesfully \n<:emoji_11:985957316799111219>|INFO WORLD: "..getBot().world.." \n<a:online:972348462811201587>|STATUS: "..getBot().status.."\n<:Gems:981947271388200960>|BOT GEMS: "..findItem(112).."\n<a:Alert:864403513174130688>|RAM: ") 
+   sendPacket(2,"action|buy\nitem|upgrade_backpack")
+   sleep(1200)
+  end
+  end
+  reconnect(WorldSave, startPosX, startPosY)
+end
+
+function godrop()
+if mode_drop == 1 then
+  dm1()
+end
+if mode_drop == 2 then
+  dm2()
+end
+if mode_drop == 3 then
+  dm3()
+end
+end
+
+function dm1()
+wpack = getworld()
+if getworld() ~= WorldSave then
+collectSet(false)
+  sendPacket(3,"action|join_request\nname|"..WorldSave)
+    sleep(5000)
+    reconnect(WorldSave, startPosX, startPosY) 
+    trss()
+  sendPacket(3,"action|join_request\nname|"..WorldSave.."|"..IDDoor)
+  sleep(2500)
+end
+sleep(1000)
+     for _, tile in pairs(getTiles()) do
+      if tile.bg == Pos_Drop_Pack then
+         findPath(tile.x-1,tile.y)
+         sleep(1000)
+         reconnect(WorldSave, startPosX, startPosY) 
+       end
+     end
+   sleep(800)
+   buypack()
+   sleep(2000)
+    droppack()    
+  if getworld() ~= wpack then
+    while getworld() ~= wpack do
+  sendPacket(3,"action|join_request\nname|"..wpack)
+  sleep(3000)
+    end
+  end
+  if getTile(math.floor(getBot().x/32),math.floor(getBot().y/32)).fg == 6 then
+  sendPacket(3,"action|join_request\nname|"..wpack.."|"..IDDoor)
+  sleep(500)
+  move(0,1)
+  end  
+  harvest()
+end
+
+function dm2()
+wpack = getworld()
+if getworld() ~= WorldSave then
+collectSet(false)
+  sendPacket(3,"action|join_request\nname|"..WorldSave)
+    sleep(5000)
+    trss()
+  sendPacket(3,"action|join_request\nname|"..WorldSave.."|"..IDDoor)
+  sleep(2500)
+  log("\n<a:bot:979597895487619092>|BOT NAME: "..getBot().name.." \n<a:emoji_4:948845879874433085>LOGS: In WORLD Storage: "..WorldSave.." \n<:emoji_11:985957316799111219>|INFO WORLD: "..getBot().world.." \n<a:online:972348462811201587>|STATUS: "..getBot().status.."\n<:Gems:981947271388200960>|BOT GEMS: "..findItem(112).."\n<a:Alert:864403513174130688>|RAM: ")
+end
+sleep(1000)
+move(5,0)
+   sleep(800)
+   buypack()
+   sleep(2000)
+    droppack()
+  if getworld() ~= wpack then
+    while getworld() ~= wpack do
+  sendPacket(3,"action|join_request\nname|"..wpack)
+  sleep(5000)
+    end
+  end
+ if getTile(math.floor(getBot().x/32-1),math.floor(getBot().y/32)).fg == 6 then
+  move(4,0)
+ end
+  harvest()
+end
+
+function dm3()
+  for _, tile in pairs(getTiles()) do
+      if tile.fg == 1422 then
+         findPath(tile.x-1,tile.y)
+         sleep(1500)
+       end
+   end
+buypack()
+sleep(800)
+   droppack()
+sleep(1000)
+harvest()
+end
+
+function cek()
+ for _,tile in pairs(getTiles()) do
+    if tile.fg == ItemID + 1 then
+    sleep(880)
+    end
+ end
+end
+
+function owner()
+  for _,player in pairs(getPlayers()) do
+      if string.upper(player.name) == string.upper(onwer) then
+          start = true
+          say("`#Hi Owner Sayang")
+          sleep(1000)
+      end
+  end
+end
+
+function cekow()
+  owner()
+  if start == true then
+      auto()
+  else
+      say("`4Kamu bukan Owner deh")
+      sleep(5000)
+  end
+end
+
+function auto()
+if looping then 
+while true do
+worlds = start_from - 1
+for i = #World,1,-1 do
+   worlds = worlds + 1
+   log("\n<a:bot:979597895487619092>|BOT NAME: "..getBot().name.." \n<a:emoji_4:948845879874433085>|LOGS: Warp To: ("..World[worlds]..") World Ke: "..worlds.." \n<:emoji_11:985957316799111219>|INFO WORLD: "..getBot().world.." \n<a:online:972348462811201587>|STATUS: "..getBot().status.."\n<:Gems:981947271388200960>|BOT GEMS: "..findItem(112).."\n<a:Alert:864403513174130688>|RAM: ")
+   sendPacket(3,"action|join_request\nname|"..World[worlds])
+   sleep(5000)
+   say("Script by `2IdaAth#7329")
+   sleep(1500)
+   say("Clear Succes")
+   trss()
+   say("start")
+   sendPacket(3,"action|join_request\nname|"..World[worlds].."|"..IDDoor)
+   sleep(500)
+   harvest()
+   sleep(1500)
+   cekblock()
+   if findItem(ItemID + 1) > 1 then
+   plant()
+   sleep(800)
+   dropseed()
+   reconnect(string.upper(getBot().world), startPosX, startPosY) 
+   end
+end
+end
+else
+  worlds = start_from - 1
+for i = #World,1,-1 do
+   worlds = worlds + 1
+   log("\n<a:bot:979597895487619092>|BOT NAME: "..getBot().name.." \n<a:emoji_4:948845879874433085>|LOGS: Warp To: ("..World[worlds]..") World Ke: "..worlds.." \n<:emoji_11:985957316799111219>|INFO WORLD: "..getBot().world.." \n<a:online:972348462811201587>|STATUS: "..getBot().status.."\n<:Gems:981947271388200960>|BOT GEMS: "..findItem(112).."\n<a:Alert:864403513174130688>|RAM: ")
+   sendPacket(3,"action|join_request\nname|"..World[worlds]) 
+   sleep(5000)
+   say("Script by `2IdaAth#7329")
+   sleep(1500)
+   say("Clear Succses")
+   trss()
+   say("start")
+   sendPacket(3,"action|join_request\nname|"..World[worlds].."|"..IDDoor)
+   sleep(500)
+   harvest()
+   sleep(1500)
+   cekblock()
+   if findItem(ItemID + 1) > 1 then
+   plant()
+   sleep(800)
+   dropseed()
+   reconnect(string.upper(getBot().world), startPosX, startPosY) 
+   end
+end
+end
+end
+
+function cmds(v)
+  if v[0] == "OnTalkBubble" and v[2]:find("!start") then
+      cekow()
+  elseif v[0] == "OnTalkBubble" and v[2]:find("!register") then
+      owner()   
+  elseif v[0] == "OnTalkBubble" and v[2]:lower():find("!join (%w+)") then
+      sendPacket(3, "action|join_request\nname|" .. v[2]:lower():match("!join (%w+)"))
+      sendPacket(3, "action|join_request\nname|" .. v[2]:lower():match("!join (%w+)"))
+  elseif v[0] == "OnTalkBubble" and v[2]:find("!unaccess") then
+      say("/unaccess")
+      sendPacket(2, "action|dialog_return\ndialog_name|unaccess")
+  elseif v[0] == "OnTalkBubble" and v[2]:find("!gstree") then
+      say("READY To HARVEST :`2 "..readi())
+      sleep(1000)
+      say("NOT To harvest :`4 "..unready())
+      sleep(1000)
+      say("TOTAL TREE :`b "..readi()+unready())
+      sleep(5000)
+  elseif v[0] == "OnTalkBubble" and v[2]:find("!setid (%d+)") then
+    ItemID = tonumber(v[2]:match("!setid (%d+)"))
+    say("ID Rotasi: "..ItemID.." Name"..getItemNino(ItemID))
+  elseif v[0] == "OnTalkBubble" and v[2]:find("!wp (%d+)") then
+    start_from = tonumber(v[2]:match("!wp (%d+)"))
+    say("Info World: "..start_from)    
+  elseif v[0] == "OnTalkBubble" and v[2]:find("!test") then
+      say("Haloo Sayang")
+      sleep(2000)
+  elseif v[0] == "OnTalkBubble" and v[2]:find("!bp") then
+      say("`1Upgrading Backpack")
+      sleep(500)
+      sendPacket(2,"action|buy\nitem|locks")
+      sleep(700)
+      sendPacket(2, "action|buy\nitem|upgrade_backpack")
+      sleep(700)
+      say("`3BackPack Upgraded")
+      elseif v[0] == "OnTalkBubble" and v[2]:find("!kiri (%d+)") then
+      y = v[2]:match("!kiri (%d+)")
+      move(-(y),0)
+elseif v[0] == "OnTalkBubble" and v[2]:find("!kanan (%d+)") then
+y = v[2]:match("!kanan (%d+)")
+move((y),0)		
+      elseif v[0] == "OnTalkBubble" and v[2]:find("!drop (%d+)") then
+  wearz = v[2]:match("!drop (%d+)")
+  drop(tonumber(wearz))
+  drop(tonumber(wearz)) 
+      elseif v[0] == "OnTalkBubble" and v[2]:find("!wear (%d+)") then
+  wearz = v[2]:match("!wear (%d+)")
+  wear(tonumber(wearz))
+  say("`2Successfuly weared!")     
+   end
+end
+addHook("OnTalkBubble", cmds)
